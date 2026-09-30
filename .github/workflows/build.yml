@@ -1,6 +1,6 @@
 name: Build Nexty Macro
 
-on:
+"on":
   workflow_dispatch:
   push:
     branches:
@@ -14,17 +14,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract project ZIP
+      - name: Extract ZIP
         run: |
           mkdir project
           unzip -q NextyMacro-Full.zip -d project
-
-          if [ -f "project/settings.gradle.kts" ]; then
-            echo "PROJECT_DIR=project" >> "$GITHUB_ENV"
-          else
-            DIR=$(find project -name settings.gradle.kts -type f | head -n 1 | xargs dirname)
-            echo "PROJECT_DIR=$DIR" >> "$GITHUB_ENV"
-          fi
+          echo "PROJECT_DIR=$(find project -name settings.gradle.kts -type f -exec dirname {} \; | head -n 1)" >> "$GITHUB_ENV"
 
       - name: Setup Java
         uses: actions/setup-java@v5

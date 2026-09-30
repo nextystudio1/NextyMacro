@@ -1,1 +1,49 @@
+name: Build Nexty Macro
 
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract project ZIP
+        run: |
+          mkdir project
+          unzip -q NextyMacro-Full.zip -d project
+
+          if [ -f "project/settings.gradle.kts" ]; then
+            echo "PROJECT_DIR=project" >> "$GITHUB_ENV"
+          else
+            DIR=$(find project -name settings.gradle.kts -type f | head -n 1 | xargs dirname)
+            echo "PROJECT_DIR=$DIR" >> "$GITHUB_ENV"
+          fi
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Build APK
+        run: |
+          cd "$PROJECT_DIR"
+          gradle :app:assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: NextyMacro-APK
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/app-debug.apk

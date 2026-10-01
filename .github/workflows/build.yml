@@ -17,7 +17,7 @@ jobs:
       - name: Extract ZIP
         run: |
           mkdir project
-          unzip -q NextyMacro-FloatingPanel-v29-LOOP-5-6.zip -d project
+          unzip -q NextyMacro-FloatingPanel-v30-PANEL-BEBAS-PINDAH.zip -d project
           echo "PROJECT_DIR=$(find project -name settings.gradle.kts -type f -exec dirname {} \; | head -n 1)" >> "$GITHUB_ENV"
 
       - name: Setup Java
